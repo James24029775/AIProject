@@ -30,7 +30,7 @@ def save_predictions(student_id, predictions):
 class Config():
     train_dir = 'root'
     unknown_dir = 'unknown'
-    epoch = 10
+    epoch = 1
     bc = 64
     gpu = 'True'
     lr = 1e-3
@@ -62,10 +62,16 @@ class Mydataset(Dataset):
     def __len__(self):
         return len(self.file_list)
 
+preprocess = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
 
 train_folder = ImageFolder(root=Config.train_dir)
 
-train_dataset = Mydataset(train_folder.imgs, transform=transforms.ToTensor())
+train_dataset = Mydataset(train_folder.imgs, transform=preprocess)
 
 train_loader = DataLoader(dataset=train_dataset,
                           batch_size=Config.bc, shuffle=True)
@@ -108,7 +114,7 @@ while True:
         unknown_list.append('unknown/'+str(i) + '.jpg')
     i += 1
 
-unknown_data = Mydataset(unknown_list, transform=transforms.ToTensor())
+unknown_data = Mydataset(unknown_list, transform=preprocess)
 unknown_loader = DataLoader(
     dataset=unknown_data, batch_size=Config.bc, shuffle=False)
 
