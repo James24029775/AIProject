@@ -4,7 +4,7 @@ import torch.utils.data as data
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
-import net
+import model_method
 
 # Set the train and validation directory paths
 train_directory = 'Fruit/Train/'
