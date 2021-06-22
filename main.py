@@ -114,9 +114,9 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
 
 # Train the model
-model_ft = net.train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
+model_ft = model_method.train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                            num_epochs, dataloaders, dataset_sizes, device)
 
-net.test_model(model_ft, criterion, dataloaders, dataset_sizes, device)
+model_method.test_model(model_ft, criterion, dataloaders, dataset_sizes, device)
 
 ################################### END ###################################
