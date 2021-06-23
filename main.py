@@ -84,19 +84,36 @@ print("Training-set size:", dataset_sizes['train'],
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # 這裡新增model種類
-#########################################################################
-option = int(input("\nWhich model want to apply: 1 for Resnet :"))
+option = int(input(
+    "\nWhich model want to apply: 1 for resnet, 2 for googlenet, 3 for mobilenet_v2:"))
 
 if option == 1:
     model_ft = models.resnet18(pretrained=True)
 
+elif option == 2:
+    model_ft = models.googlenet(pretrained=True)
+
+elif option == 3:
+    model_ft = models.mobilenet_v2(pretrained=True)
+
+elif option == 4:
+    model_ft = models.vgg11(pretrained=True)
+
 else:
     raise ValueError("Invalid option!")
 
-#########################################################################
 
-num_ftrs = model_ft.fc.in_features
-model_ft.fc = nn.Linear(num_ftrs, num_classes)
+if option == 1 or option == 2:
+    num_ftrs = model_ft.fc.in_features
+    model_ft.fc = nn.Linear(num_ftrs, num_classes)
+
+elif option == 3:
+    num_ftrs = model_ft.classifier[1].in_features
+    model_ft.classifier[1] = nn.Linear(num_ftrs, num_classes)
+
+elif option == 4:
+    num_ftrs = model_ft.classifier[6].in_features
+    model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
 
 
 # Transfer the model to GPU
@@ -106,11 +123,18 @@ model_ft = model_ft.to(device)
 criterion = nn.CrossEntropyLoss()
 
 # Optimizer
-optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+order = int(input('\nChoose optimizer 1 for SGD, 2 for Adam:'))
+if order == 1:
+    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 
-# optimizer = optim.Adam(model_ft.parameters(), lr=0.001)
-# (optional: choosse Adam)
-#                                               -- 蕭望緯 --
+elif order == 2:
+    optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
+    # (optional: choosse Adam)
+    #                                               -- 蕭望緯 --
+
+else:
+    raise ValueError('Invalid order!')
+
 
 # Learning rate decay
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
@@ -118,9 +142,10 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
 # Train the model
 model_ft = model_method.train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                           num_epochs, dataloaders, dataset_sizes, device)
+                                    num_epochs, dataloaders, dataset_sizes, device)
 
-y_pred, y_true = model_method.test_model(model_ft, criterion, dataloaders, dataset_sizes, device)
+y_pred, y_true = model_method.test_model(
+    model_ft, criterion, dataloaders, dataset_sizes, device)
 print(classification_report(y_pred, y_true, target_names=class_names))
 
 ################################### END ###################################
