@@ -6,3 +6,4 @@ Have to install the following packages:
 1.torch
 2.torchvision
 3.sklearn
+4.torchsummary
