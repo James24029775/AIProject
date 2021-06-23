@@ -1,1 +1,8 @@
+Have to install the following software
+1.cuda
+2.cuda toolkit
 
+Have to install the following packages:
+1.torch
+2.torchvision
+3.sklearn
