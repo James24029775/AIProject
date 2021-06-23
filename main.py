@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
 import model_method
+from sklearn.metrics import classification_report
 
 # Set the train and validation directory paths
 train_directory = 'Fruit/Train/'
@@ -54,6 +55,8 @@ dataset = {
     'valid': datasets.ImageFolder(root=valid_directory, transform=image_transforms['valid']),
     'test': datasets.ImageFolder(root=test_directory, transform=image_transforms['test'])
 }
+
+class_names = dataset['train'].classes
 
 # Size of train, validation data and test data
 dataset_sizes = {
@@ -117,6 +120,7 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 model_ft = model_method.train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                            num_epochs, dataloaders, dataset_sizes, device)
 
-model_method.test_model(model_ft, criterion, dataloaders, dataset_sizes, device)
+y_pred, y_true = model_method.test_model(model_ft, criterion, dataloaders, dataset_sizes, device)
+print(classification_report(y_pred, y_true, target_names=class_names))
 
 ################################### END ###################################
