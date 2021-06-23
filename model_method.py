@@ -4,7 +4,6 @@ import time
 import copy
 from torchsummary import summary
 
-
 def train_model(model, criterion, optimizer, scheduler, num_epochs, dataloaders, dataset_sizes, device):
     # Model training routine
     print("\nTraining:-\n")
@@ -101,6 +100,8 @@ def test_model(model, criterion, dataloaders, dataset_sizes, device):
 
     correct = 0
     loss = 0
+    y_pred = []
+    y_true = []
 
     for step, data in enumerate(dataloaders['test']):
         img, label = data
@@ -110,6 +111,13 @@ def test_model(model, criterion, dataloaders, dataset_sizes, device):
         pred = output.argmax(dim=1)
         loss += criterion(output, label).item() * img.size(0)
         correct += torch.sum(label == pred)
+
+        for x in pred:
+            y_pred.append(x.item())
+
+        for x in label:
+            y_true.append(x.item())
+
         if step % 10 == 0:
             print('Progress:{}/{}'.format(step, len(dataloaders['test'])))
 
@@ -118,3 +126,5 @@ def test_model(model, criterion, dataloaders, dataset_sizes, device):
 
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
         avg_loss, correct, dataset_sizes['test'], correct_rate))
+
+    return y_pred, y_true
