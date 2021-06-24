@@ -7,3 +7,6 @@ Have to install the following packages:
 2.torchvision
 3.sklearn
 4.torchsummary
+
+How to run?
+After installing required package, run main.py directly
